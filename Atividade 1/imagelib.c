@@ -4,7 +4,7 @@
 #include <stdarg.h>
 
 #include "imagelib.h"
-#define PER_LINE 16
+#define PER_LINE 99
 
 /*-------------------------------------------------------------------------
  * Image allocation and free routines
