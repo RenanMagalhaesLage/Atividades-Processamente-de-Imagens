@@ -222,7 +222,9 @@ void msg2(int numL, int numC, int amostraC, int amostraL, int quantidade, int nu
 
 }
 
-
+/*
+    Função img_put modificada para se adequar ao problema
+*/
 void img_put2(imageASCII img, char *name, int nr, int nc, int ml, int tp)
 {
     int count;
@@ -260,13 +262,26 @@ void img_put2(imageASCII img, char *name, int nr, int nc, int ml, int tp)
     fclose(fimg);
 }
 
+/*
+    Função img_name modificada para se adequar ao problema
+*/
+void img_name2(char *name, char *in, char *out, int tp)
+{
+    char *ext[3] = {".pbm", ".pgm", ".ppm"};
+    char *p = strstr(name, ext[tp - 1]);
+    if (p)
+        *p = 0;
+    sprintf(in, "%s%s", name, ext[tp - 1]);
+    sprintf(out, "result.txt");
+}
+
 
 /*-------------------------------------------------------------------------
  * main function
  *-------------------------------------------------------------------------*/
 int main(int argc, char *argv[])
 {
-    int nc, nr, ml, tp;
+    int nc, nr, max, tp;
     char *p, nameIn[100], nameOut[100], cmd[110];
     int amostraC, amostraL, quant;
     char *simbolos;
@@ -274,9 +289,9 @@ int main(int argc, char *argv[])
 
     if (argc < 5)
         msg(argv[0]);
-    img_name(argv[1], nameIn, nameOut, GRAY);
+    img_name2(argv[1], nameIn, nameOut, GRAY);
     //-- read image
-    In = img_get(nameIn, &nr, &nc, &ml, GRAY);
+    In = img_get(nameIn, &nr, &nc, &max, GRAY);
     Out = img_alloc(nr, nc);
     
     //-- transformation
@@ -288,17 +303,17 @@ int main(int argc, char *argv[])
 
     simbolos = obtemSimbolos(argv[4]);
 
-    quant = quantizacao(ml, strlen(simbolos));
+    quant = quantizacao(max, strlen(simbolos));
 
     asci(In, Out, Out2, nr, nc, atoi(argv[3]), atoi(argv[2]), amostraC, amostraL, quant, simbolos);
     msg2(atoi(argv[3]), atoi(argv[2]),amostraC, amostraL, quant, strlen(simbolos));
-    caracteres(Out2, Ascii, atoi(argv[3]), atoi(argv[2]),amostraC, amostraL, quant, simbolos, ml);
-    //imprime(Dog, atoi(argv[3]), atoi(argv[2]));
+    caracteres(Out2, Ascii, atoi(argv[3]), atoi(argv[2]),amostraC, amostraL, quant, simbolos, max);
+    //imprime(Ascii, atoi(argv[3]), atoi(argv[2]));
 
     //-- save image
-    img_put2(Ascii, nameOut, atoi(argv[3]), atoi(argv[2]), ml, GRAY);
-    //img_put(Teste, nameOut, atoi(argv[3]), atoi(argv[2]), ml, GRAY);
-    //img_put(Out, nameOut, nr, atoi(argv[2]), ml, GRAY);
+    img_put2(Ascii, nameOut, atoi(argv[3]), atoi(argv[2]), max, GRAY);
+    //img_put(Teste, nameOut, atoi(argv[3]), atoi(argv[2]), max, GRAY);
+    //img_put(Out, nameOut, nr, atoi(argv[2]), max, GRAY);
     sprintf(cmd, "%s %s &", VIEW, nameOut);
     system(cmd);
     img_free(In);

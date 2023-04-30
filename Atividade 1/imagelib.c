@@ -36,7 +36,7 @@ void img_name(char *name, char *in, char *out, int tp)
     if (p)
         *p = 0;
     sprintf(in, "%s%s", name, ext[tp - 1]);
-    sprintf(out, "result.txt");
+    sprintf(out, "%s-result%s", name, ext[tp - 1]);
 }
 
 /*-------------------------------------------------------------------------
