@@ -25,7 +25,7 @@ typedef char *imageASCII;
     desse código, preferi definir esse valor, que representa quantos elementos serão 
     colocados no arquivo de saída por linha
 */
-#define POR_LINHA 99
+//#define POR_LINHA 99
 
 /*
     Função que calcula a amostragem das Colunas
@@ -253,7 +253,7 @@ void img_put2(imageASCII img, char *name, int nr, int nc, int ml, int tp)
             fprintf(fimg, "%3d %3d %3d ", r, g, b);
         }
         count++;
-        if (count > POR_LINHA)
+        if (count >= nc)
         {
             fprintf(fimg, "\n");
             count = 0;
