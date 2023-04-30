@@ -14,9 +14,25 @@
 #include <math.h>
 #include "imagelib.h"
 
+/*
+    Como a nova imagem gerada será formada de char, foi necessário
+    definir um novo tipo 
+*/
 typedef char *imageASCII;
-#define PER_LINE 99
 
+/*
+    Para melhor visualização para resolver problemas enfrentados ao longo da realização
+    desse código, preferi definir esse valor, que representa quantos elementos serão 
+    colocados no arquivo de saída por linha
+*/
+#define POR_LINHA 99
+
+/*
+    Função que calcula a amostragem das Colunas
+    Parâmetros:
+        nc = Número de colunas da imagem original
+        *coluna = Nova quantidade de colunas passadas pelo usuária
+*/
 int amostragemColuna(int nc, char *coluna)
 {
     int valor = atoi(coluna);
@@ -24,6 +40,12 @@ int amostragemColuna(int nc, char *coluna)
     return valor;
 }
 
+/*
+    Função que calcula a amostragem das Linhas
+    Parâmetros:
+        nr = Número de linhas da imagem original
+        *linha = Nova quantidade de linhas passadas pelo usuária
+*/
 int amostragemLinha(int nr, char *linha)
 {
     int valor = atoi(linha);
@@ -31,101 +53,139 @@ int amostragemLinha(int nr, char *linha)
     return valor;
 }
 
-/*Função que obtem um vetor com os caracteres*/
+/*
+    Função que obtem que extrai da string os caracteres e os coloca em um vetor
+    Parâmetros:
+        *simbolos = String de Caracteres
+*/
 char* obtemSimbolos(char *simbolos)
 {
-    int tamanho = strlen(simbolos);
-    //printf("%d\n", tamanho);
     char *simbs = simbolos;
-    /*for(int i = 0; i < tamanho; i++)
-    {
-        printf("simb: %c \n", simbs[i]);
-    }*/
     return simbs;
-    //char teste = simbolos[0];
 }
 
-/*Função que calcula quantos niveis de cinza irá representar um caracter*/
-int quantizacao(int ml, int tamanho)
+/*
+    Função que calcula quantos niveis de cinza irá codificar cada char do string de caracteres
+    Parâmetros:
+        max = Máximo tom de cinza
+        tamanho = Tamanho da string de caracteres
+
+*/
+int quantizacao(int max, int tamanho)
 {
     //int valor = round((ml) / tamanho);
-    float valor = (float)(ml * 1) / tamanho;
+    float valor = (float)(max) / tamanho;
     int x = round (valor);
-    printf("valor = %d e %f\n",x, valor);
-    //int valor = (ml * 1) / tamanho;
-    if(tamanho * valor < ml){
+    /*
+    if(tamanho * x < ml){
         printf("Sobra da quantizacao: %d\n", (ml -(tamanho * valor )));
     }
-    //printf("valor = %d\n", valor);
+    if(tamanho * x > ml){
+        printf("Excesso da quantizacao: %d\n", ((tamanho * x )-ml));
+    }
+    */
     return x;
 }
 
-void asci(image In, image Out, image Out2, int nr, int nc, int mn, int numL, int numC, int amostraC, int amostraL, int quantidade, char *simbolos)
+/*
+    Função que irá transformar a imagem nr x nc na imagem numL x numC através dos valores da amostra das coluna e das linhas
+    Parâmetros:
+        In = Imagem de entrada -> Imagem original inserida pelo usuário
+        Out = Imagem nr x numC -> Imagem com as colunas transformadas
+        Out2 = Imagem numL x numC -> Imagem com as colunas e linhas transformadas
+        nr = Número de linhas da imagem original
+        nc = Número de colunas da imagem original
+        numL = Número de linhas da nova imagem definida pelo usuário
+        numC = Número de colunas da nova imagem definida pelo usuário
+        amostraC = Amostra do tamanho da coluna
+        amostraL = Amostra do tamanho da linha
+        quantidade = Quantização dos valores de cinza
+        *simbolos = Vetor com os caracteres desejados pelo usuário
+
+*/
+void asci(image In, image Out, image Out2, int nr, int nc, int numL, int numC, int amostraC, int amostraL, int quantidade, char *simbolos)
 {
-    int soma;
-    int cont = amostraC;
     int x,y;
-    //Primeiro iremos rezlizar a média dos valores da amostra da coluna
-    //no final desse for teremos uma imagem com o novo numero de coluna porém com o numero de linhas originais
+    /*
+        Primeiro iremos obter os valores necessários para formar a imagem com o novo número de colunas
+        Ou seja, ou final desse primeiro 'for' iremos obter uma imagem nr x numC
+    */
     for(int i = 0; i < nr; i++)
     {
         x = 0;
-        for(int j = 0; j < nc; j++)
+        for(int j = 0; j < nc; j= j + amostraC)
         {
-            soma = soma + In[i * nc + j];
-            cont--;
-            if(cont == 0){//foi somado os oito números
-                cont = amostraC;
-                Out[i * numC + x] = (soma / amostraC);
-                x++; //serve para acessar a posição correta em Out
-                soma = 0;
-            }
+            Out[i * numC + x] = In[i * nc + j];
+            x++;            
         }
     }
-    soma = 0;
-    cont = amostraL;
-    //Agora iremos rezlizar a média dos valores da amostra da linha
+    /*
+        Agora iremos obter os valores necessários para formar a imagem com o novo número de linhas,
+        usando a imagem já com o novo número de colunas
+        Ou seja, ou final desse primeiro 'for' iremos obter uma imagem numL x numC
+    */
     for(int i = 0; i < numC; i++)
     {
         x = i;
         y=i;
-        for(int j = 0; j < nr; j++) // x = i + nc irá acessar os elementos de cada coluna
+        for(int j = 0; j < numL; j++)
         {
-            soma = soma + Out[x];
-            cont--;
-            if(cont == 0){
-                cont = amostraL;
-                Out2[y] = soma / amostraL;
-                //printf("Out[%d] = %d\n",y,Out2[y]);
-                y= y + numC;; //serve para acessar a posição correta em Out
-                soma = 0;
-            }
+            Out2[x] = Out[i+j*numC*amostraL];
             x = x + numC;
         }
     }
 
 }
 
-void caracteres(image In, imageASCII Out, int numL, int numC, int amostraC, int amostraL, int quantidade, char *simbolos){
-    int x = 0;
+/*
+    Função que irá transformar os valores de tons de cinza da imagem em seus caracteres correspondentes
+    Parâmetros:
+        In = Imagem de entrada -> Imagem já com o novo tamanho definido na entrada pelo usuário
+        Out = Imagem de saida -> Imagem com os caracteres correspondentes
+        numL = Número de linhas da nova imagem definida pelo usuário
+        numC = Número de colunas da nova imagem definida pelo usuário
+        amostraC = Amostra do tamanho da coluna
+        amostraL = Amostra do tamanho da linha
+        quantidade = Quantização dos valores de cinza
+        *simbolos = Vetor com os caracteres desejados pelo usuário
+        max = Máximo tom de cinza
+*/
+void caracteres(image In, imageASCII Out, int numL, int numC, int amostraC, int amostraL, int quantidade, char *simbolos, int max){
     int numSimb = strlen(simbolos);
-    for(int y = quantidade, yant = 0; y <= (numSimb*quantidade); yant = y, y = y + quantidade ){
-        for(int i = 0; i < numL; i++)
+    int vet[numSimb];
+    int def = 0; //Variável para identificar se aquele valor já foi convertido para char -> 0 = não foi convertido; 1 = já foi convertido
+    for(int y = 0; y < numSimb; y++ ){
+        if(y == (numSimb-1)){
+            vet[y] = max;
+        }
+        else{
+            vet[y] = ((y+1)*quantidade);
+        }
+        //printf("vet[%d]=%d  simb = %c\n", y, vet[y], simbolos[y]);
+    }
+    for(int i = 0; i < numL; i++)
+    {
+        for(int j = 0; j < numC; j++)
         {
-            for(int j = 0; j < numC; j++)
-            {
-                if (In[i * numC + j] < y && In[i * numC + j] > yant){  
+            for(int x = 0; x < numSimb; x++){
+                if (In[i * numC + j] <= vet[x] && def == 0){  
                     Out[i * numC + j] = simbolos[x];
-                    //printf("%c  ", Out[i * numC + j]);
+                    def = 1; 
+                    //printf("In[%d]=%d   Out=%c\n", (i * numC + j), In[i * numC + j], Out[i * numC + j]);
                 }
             }
+            def = 0;
         }
-        //printf("x=%d\n", x);
-        x++;
-    }
-    
+    }   
 }
 
+/*
+    Função para imprimir a imagem em ASCII no terminal
+    Parâmetros:
+        Out = Imagem com os chars
+        numL = Número de linhas da imagem
+        numC = Número de colunas da imagem
+*/
 void imprime(imageASCII Out, int numL, int numC){
     int cont = 0;
     for(int i = 0; i < numL; i++)
@@ -136,18 +196,6 @@ void imprime(imageASCII Out, int numL, int numC){
         }
         printf("\n");
     }
-}
-
-void msg2(int numL, int numC, int amostraC, int amostraL, int quantidade, int numSimb){
-    printf("\nImage ASCII Informations:");
-    printf("\n--------------------------\n");
-    printf("Number of rows..............: %d \n", numL);
-    printf("Number of columns...........: %d \n", numC);
-    printf("Numero de simbolos..........: %d \n", numSimb);
-    printf("Amostragem das linhas.......: %d \n", amostraL);
-    printf("Amostragem das colunas......: %d \n", amostraC);
-    printf("Quantificacao. .............: %d \n\n", quantidade);
-
 }
 
 void msg(char *s)
@@ -162,24 +210,38 @@ void msg(char *s)
     exit(1);
 }
 
+void msg2(int numL, int numC, int amostraC, int amostraL, int quantidade, int numSimb){
+    printf("\nInformacoes - Imagem em ASCII:");
+    printf("\n---------------------------------\n");
+    printf("Numero de Linhas............: %d \n", numL);
+    printf("Numero de colunas...........: %d \n", numC);
+    printf("Numero de simbolos..........: %d \n", numSimb);
+    printf("Amostragem das linhas.......: %d \n", amostraL);
+    printf("Amostragem das colunas......: %d \n", amostraC);
+    printf("Quantificacao de char.......: %d \n\n", quantidade);
+
+}
+
 
 void img_put2(imageASCII img, char *name, int nr, int nc, int ml, int tp)
 {
     int count;
     FILE *fimg;
     ERROR((fimg = fopen(name, "wt")) == NULL, errormsg("Image creation error: <%s>", name));
+    /*
     fprintf(fimg, "P%c\n", tp + '0');
     fputs(CREATOR, fimg);
     fprintf(fimg, "%d  %d\n", nc, nr);
     if (tp != BW)
         fprintf(fimg, "%d\n", ml);
+    */
     count = 0;
     for (int i = 0; i < nr * nc; i++)
     {
         if (tp != COLOR)
         {
             char x = img[i];
-            fprintf(fimg, "%c ", x);
+            fprintf(fimg, "%c", x);
         }
         else
         {
@@ -189,7 +251,7 @@ void img_put2(imageASCII img, char *name, int nr, int nc, int ml, int tp)
             fprintf(fimg, "%3d %3d %3d ", r, g, b);
         }
         count++;
-        if (count > PER_LINE)
+        if (count > POR_LINHA)
         {
             fprintf(fimg, "\n");
             count = 0;
@@ -208,7 +270,8 @@ int main(int argc, char *argv[])
     char *p, nameIn[100], nameOut[100], cmd[110];
     int amostraC, amostraL, quant;
     char *simbolos;
-    image In, Out, Teste;
+    image In, Out, Out2;
+
     if (argc < 5)
         msg(argv[0]);
     img_name(argv[1], nameIn, nameOut, GRAY);
@@ -220,26 +283,27 @@ int main(int argc, char *argv[])
     amostraC = amostragemColuna(nc, argv[2]);
     amostraL = amostragemLinha(nr, argv[3]);
 
-    //alocando vetor para a nova imagem
-    //Teste = img_alloc(atoi(argv[2]), atoi(argv[3]));
-    Teste = img_alloc(nr, nc);
-    imageASCII Dog = (imageASCII)malloc(atoi(argv[3]) * atoi(argv[2]) * sizeof(char));
+    Out2 = img_alloc(nr, nc);
+    imageASCII Ascii = (imageASCII)malloc(atoi(argv[3]) * atoi(argv[2]) * sizeof(char));
 
     simbolos = obtemSimbolos(argv[4]);
 
     quant = quantizacao(ml, strlen(simbolos));
 
-    asci(In, Out, Teste, nr, nc, ml, atoi(argv[3]), atoi(argv[2]), amostraC, amostraL, quant, simbolos);
+    asci(In, Out, Out2, nr, nc, atoi(argv[3]), atoi(argv[2]), amostraC, amostraL, quant, simbolos);
     msg2(atoi(argv[3]), atoi(argv[2]),amostraC, amostraL, quant, strlen(simbolos));
-    caracteres(Teste, Dog, atoi(argv[3]), atoi(argv[2]),amostraC, amostraL, quant, simbolos);
-    imprime(Dog, atoi(argv[3]), atoi(argv[2]));
+    caracteres(Out2, Ascii, atoi(argv[3]), atoi(argv[2]),amostraC, amostraL, quant, simbolos, ml);
+    //imprime(Dog, atoi(argv[3]), atoi(argv[2]));
+
     //-- save image
-    //img_put2(Dog, nameOut, atoi(argv[3]), atoi(argv[2]), ml, GRAY);
-    img_put(Teste, nameOut, atoi(argv[3]), atoi(argv[2]), ml, GRAY);
+    img_put2(Ascii, nameOut, atoi(argv[3]), atoi(argv[2]), ml, GRAY);
+    //img_put(Teste, nameOut, atoi(argv[3]), atoi(argv[2]), ml, GRAY);
+    //img_put(Out, nameOut, nr, atoi(argv[2]), ml, GRAY);
     sprintf(cmd, "%s %s &", VIEW, nameOut);
     system(cmd);
     img_free(In);
     img_free(Out);
-    img_free(Teste);
+    img_free(Out2);
+    free(Ascii);
     return 0;
 }
