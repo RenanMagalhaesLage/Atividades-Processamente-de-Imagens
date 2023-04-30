@@ -103,7 +103,7 @@ int quantizacao(int max, int tamanho)
         *simbolos = Vetor com os caracteres desejados pelo usuário
 
 */
-void asci(image In, image Out, image Out2, int nr, int nc, int numL, int numC, int amostraC, int amostraL, int quantidade, char *simbolos)
+void ascii(image In, image Out, image Out2, int nr, int nc, int numL, int numC, int amostraC, int amostraL, int quantidade, char *simbolos)
 {
     int x,y;
     /*
@@ -305,7 +305,7 @@ int main(int argc, char *argv[])
 
     quant = quantizacao(max, strlen(simbolos));
 
-    asci(In, Out, Out2, nr, nc, atoi(argv[3]), atoi(argv[2]), amostraC, amostraL, quant, simbolos);
+    ascii(In, Out, Out2, nr, nc, atoi(argv[3]), atoi(argv[2]), amostraC, amostraL, quant, simbolos);
     msg2(atoi(argv[3]), atoi(argv[2]),amostraC, amostraL, quant, strlen(simbolos));
     caracteres(Out2, Ascii, atoi(argv[3]), atoi(argv[2]),amostraC, amostraL, quant, simbolos, max);
     //imprime(Ascii, atoi(argv[3]), atoi(argv[2]));
