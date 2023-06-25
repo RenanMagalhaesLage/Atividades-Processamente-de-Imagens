@@ -18,14 +18,11 @@ void decode(image In)
     char name[100];
     int fsize;
     unsigned char byte;
-    int tamanhoImagem = In->nc * In->nr;
-    //printf("tamanho = %d", tamanhoImagem);
 
     // decode the name
 
-    int verificaNome = 0; // Variável para verificar se chegou no fim do nome 
-    unsigned char bit; //Variável que irá receber o bit analisado da imagem
-
+    int tamanhoImagem = In->nc * In->nr;
+    //printf("tamanho = %d", tamanhoImagem);
     int R, G, B;
     int pixel;
     unsigned char suc, ante, x; // suc = Sucessor; ante = Antecessor
@@ -37,135 +34,211 @@ void decode(image In)
     };
     int banda = 1; //1 = red, 2=green, 3=blue
     char bits[8];
+    char bitsTam[32];
     int contBit = 0;
-    int teste;
-    int teste2 = 0;
+    //int teste2 = 0;
     char* endptr;
     char simb;
+    long decimal;
+    int fimNome = 0; //1= chegou no fim do nome do arquivo; 0 = Ainda não chegou no fim do arquivo
+    int contTam = 0;
+    char tamanho[32];
+    int continuacao = 0;
 
-    do{
-        for(int i = 0; i < tamanhoImagem; i++)
+    
+    for(int i = 0; i < tamanhoImagem; i++)
+    {
+        pixel = In->px[i];
+        R = (pixel >> 16) & 0xFF;
+        G = (pixel >> 8) & 0xFF;
+        B = (pixel) & 0xFF;
+        //printf("R = %d, G= %d, B= %d \n", R,G,B);
+        switch (banda)
         {
-            pixel = In->px[i];
-            R = (pixel >> 16) & 0xFF;
-            G = (pixel >> 8) & 0xFF;
-            B = (pixel) & 0xFF;
-            //printf("R = %d, G= %d, B= %d \n", R,G,B);
-            
-
-            switch (banda)
+        case red:
+            x = (R & 0xFE);
+            suc = ((R+1) & 0xFE);
+            ante = ((R-1) & 0xFE);
+            //printf("R = %d, R+1 = %d, R-1 = %d \n", R, R+1, R-1);
+            //printf("x= %d suc=%d ante=%d \n", x, suc, ante);
+            if(x == suc)
             {
-            case red:
-                x = (R & 0xFE);
-                suc = ((R+1) & 0xFE);
-                ante = ((R-1) & 0xFE);
-                printf("R = %d, R+1 = %d, R-1 = %d \n", R, R+1, R-1);
-                printf("x= %d suc=%d ante=%d \n", x, suc, ante);
-                if(x == suc)
-                {
-                    //printf("ESCONDEU ZERO\n");
-                    bits[contBit] = '0';
-                }
-                if(x == ante)
-                {
-                    //printf("ESCONDEU UM\n");
-                    bits[contBit] = '1';
-                }
-                break;
-
-            case green:
-                x = (G & 0xFE);
-                suc = ((G+1) & 0xFE);
-                ante = ((G-1) & 0xFE);
-                printf("G = %d, G+1 = %d, G-1 = %d \n", G, G+1, G-1);
-                printf("x= %d suc=%d ante=%d \n", x, suc, ante);
-                if(x == suc)
-                {
-                    //printf("ESCONDEU ZERO\n");
-                    bits[contBit] = '0';
-                }
-                if(x == ante)
-                {
-                    //printf("ESCONDEU UM\n");
-                    bits[contBit] = '1';
-                }
-                break;
-
-            case blue:
-                x = (B & 0xFE);
-                suc = ((B+1) & 0xFE);
-                ante = ((B-1) & 0xFE);
-                printf("B = %d, B+1 = %d, B-1 = %d \n", B, B+1, B-1);
-                printf("x= %d suc=%d ante=%d \n", x, suc, ante);
-                if(x == suc)
-                {
-                    //printf("ESCONDEU ZERO\n");
-                    bits[contBit] = '0';
-                }
-                if(x == ante)
-                {
-                    //printf("ESCONDEU UM\n");
-                    bits[contBit] = '1';
-                }
-                break;
+                //printf("ESCONDEU ZERO\n");
+                bits[contBit] = '0';
             }
-            contBit++;
-            if(contBit > 7)
+            if(x == ante)
             {
-                contBit = 0;
+                //printf("ESCONDEU UM\n");
+                bits[contBit] = '1';
+            }
+            break;
 
-                long decimal = strtol(bits, &endptr, 2);
-                printf("%ld\n", decimal);
+        case green:
+            x = (G & 0xFE);
+            suc = ((G+1) & 0xFE);
+            ante = ((G-1) & 0xFE);
+            //printf("G = %d, G+1 = %d, G-1 = %d \n", G, G+1, G-1);
+            //printf("x= %d suc=%d ante=%d \n", x, suc, ante);
+            if(x == suc)
+            {
+                //printf("ESCONDEU ZERO\n");
+                bits[contBit] = '0';
+            }
+            if(x == ante)
+            {
+                //printf("ESCONDEU UM\n");
+                bits[contBit] = '1';
+            }
+            break;
+
+        case blue:
+            x = (B & 0xFE);
+            suc = ((B+1) & 0xFE);
+            ante = ((B-1) & 0xFE);
+            //printf("B = %d, B+1 = %d, B-1 = %d \n", B, B+1, B-1);
+            //printf("x= %d suc=%d ante=%d \n", x, suc, ante);
+            if(x == suc)
+            {
+                //printf("ESCONDEU ZERO\n");
+                bits[contBit] = '0';
+            }
+            if(x == ante)
+            {
+                //printf("ESCONDEU UM\n");
+                bits[contBit] = '1';
+            }
+            break;
+        }
+        contBit++;
+        if(contBit > 7)
+        {
+            contBit = 0;
+            decimal = strtol(bits, &endptr, 2);
+            //printf("bits = %.8s\n",bits);
+            printf("%ld\n", decimal);
+            if(decimal == 0 && fimNome == 0)
+            {
+                fimNome = 1;
+                continuacao = i;
+                //name[i/8] = '\0';
+                //printf("File name: %s\n", name);
+                //printf("Nome do arquivo = %s\n", name);
+                //abort();
+            }
+            /*Atribuindo o Nome enquanto não for o fim do nome do arquivo*/
+            if(fimNome == 0){
                 simb = decimal;
-                printf("simb = %c\n", simb);
+                //printf("simb = %c\n", simb);
+                name[i/8] = simb;
+                name[(i+1)/8] = '\0';
+                printf("name[%d] = %c\n", i, name[i/8]);
+            }    
+        }
+        banda++;
+        if(banda > 3)
+        {
+            banda = 1;
+        }
+    }
+    printf("File name: %s\n", name);
+    
+    contBit = 0;
+    printf("conti = %d \n", continuacao);
+    for(int i = continuacao + 1; i < tamanhoImagem; i++)
+    {
+        pixel = In->px[i];
+        R = (pixel >> 16) & 0xFF;
+        G = (pixel >> 8) & 0xFF;
+        B = (pixel) & 0xFF;
+        //printf("R = %d, G= %d, B= %d \n", R,G,B);
+        switch (banda)
+        {
+        case red:
+            x = (R & 0xFE);
+            suc = ((R+1) & 0xFE);
+            ante = ((R-1) & 0xFE);
+            //printf("R = %d, R+1 = %d, R-1 = %d \n", R, R+1, R-1);
+            //printf("x= %d suc=%d ante=%d \n", x, suc, ante);
+            if(x == suc)
+            {
+                //printf("ESCONDEU ZERO\n");
+                bitsTam[contBit] = '0';
+            }
+            if(x == ante)
+            {
+                //printf("ESCONDEU UM\n");
+                bitsTam[contBit] = '1';
+            }
+            break;
 
-                teste2++;
-                if(teste2 == 5)
+        case green:
+            x = (G & 0xFE);
+            suc = ((G+1) & 0xFE);
+            ante = ((G-1) & 0xFE);
+            //printf("G = %d, G+1 = %d, G-1 = %d \n", G, G+1, G-1);
+            //printf("x= %d suc=%d ante=%d \n", x, suc, ante);
+            if(x == suc)
+            {
+                //printf("ESCONDEU ZERO\n");
+                bitsTam[contBit] = '0';
+            }
+            if(x == ante)
+            {
+                //printf("ESCONDEU UM\n");
+                bitsTam[contBit] = '1';
+            }
+            break;
+
+        case blue:
+            x = (B & 0xFE);
+            suc = ((B+1) & 0xFE);
+            ante = ((B-1) & 0xFE);
+            //printf("B = %d, B+1 = %d, B-1 = %d \n", B, B+1, B-1);
+            //printf("x= %d suc=%d ante=%d \n", x, suc, ante);
+            if(x == suc)
+            {
+                //printf("ESCONDEU ZERO\n");
+                bitsTam[contBit] = '0';
+            }
+            if(x == ante)
+            {
+                //printf("ESCONDEU UM\n");
+                bitsTam[contBit] = '1';
+            }
+            break;
+        }
+        contBit++;
+        if(contBit > 7)
+        {
+            contBit = 0;
+            decimal = strtol(bits, &endptr, 2);
+            printf("Tamanho = %ld\n", decimal);
+        } 
+        /*Operações Relacionadas ao tamanho do arquivo*/
+        /*
+        if(contBit > 31)
+        {
+            if(contTam == 0)
+            {
+                strcpy(tamanho,bitsTam);
+                printf("bits = %s\n", bitsTam);
+                printf("tamanho = %s\n", tamanho);
+            }
+            else{
+                strcat(tamanho, bitsTam);
+                if(contTam == 3)
                 {
-                    printf("R = %d, G= %d, B= %d \n", R,G,B);
+                    decimal = strtol(tamanho, &endptr, 2);
+                    printf("Tamanho = %ld\n", decimal);
                     abort();
                 }
             }
-
-            banda++;
-            if(banda > 3)
-            {
-                banda = 1;
-            }
-
-            
-            /*for(int j = 0; j < 8; j++)
-            {
-
-                //byte = In->px[i]+'0';
-                //printf(" int = %d \n",In->px[i]);
-                //printf(" char = %c \n",byte);
-                //byte = byte & 0xFE;
-                //printf("%c \n",byte);
-                /*if(In->px[i] == (byte - '0'))
-                {
-                    printf("px = %c  byte = %c \n", In->px[i]+'0',byte );
-                    printf("O valor do bit eh zero \n");
-                }
-                else{
-                    printf("px = %d  byte = %c \n", In->px[i],byte );
-                    printf("MUDOU\n");
-                }
-
-                i++;
-
-            }
-            //printf("name = %s \n",name);*/
-
-            
-        }
-
-    }while(verificaNome < 8);
-
-    printf("File name: %s\n", name);
+            contTam++;        
+        }     */                  
+    }
     
     // decode file size
-    
+
     printf("File size: %d bytes\n", fsize);
     
     // decode file

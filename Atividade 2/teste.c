@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[])
 {
-    unsigned char x = 209;
+    unsigned char x = '0';
     unsigned char byte = 10;
     printf("Entrada = %d \n", x);
     printf("X = %d \n", (x & 0xFE));
