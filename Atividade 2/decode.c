@@ -4,6 +4,16 @@
  * Steganography - decode
  *---------------------------------------------------------*/
 
+/*−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−
+ *           UNIFAL − Universidade Federal de Alfenas.
+ *             BACHARELADO EM CIENCIA DA COMPUTACAO.
+ * Trabalho..: Imagem ASCII
+ * Disciplina: Processamento de Imagens
+ * Professor.: Luiz Eduardo da Silva
+ * Aluno.....: Renan Magalhães Lage
+ * Data......: 27/06/2023
+ *−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−*/
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
