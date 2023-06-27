@@ -13,7 +13,7 @@ Prof. [Luiz Eduardo da Silva](https://github.com/luizedsilva)
 O objetivo desse atividade é explorar os conceitos de cores e de codificação e decodificação utilizados nos formatos de imagens.
 
 ## Problema
-O termo [esteganografia](https://www.gta.ufrj.br/grad/09 1/versao-final/stegano/introducao.html) deriva da junção das palavras gregas estegano que significa “esconder ou mascarar”, e grafia, que significa “escrita”. Portanto, esteganografia pode ser compreendida como a arte de esconder informações, tornando-as ocultas, assim como a criptografia. O
+O termo [esteganografia](https://www.gta.ufrj.br/grad/09\-1/versao-final/stegano/introducao.html) deriva da junção das palavras gregas estegano que significa “esconder ou mascarar”, e grafia, que significa “escrita”. Portanto, esteganografia pode ser compreendida como a arte de esconder informações, tornando-as ocultas, assim como a criptografia. O
 objetivo desta técnica é que esses dados não sejam percebidos por terceiros; ou seja, a presen¸ca
 de mensagens escondidas dentro de arquivos é simplesmente desconhecida. Somente o receptor
 da mensagem tem conhecimento de sua existência, assim como da maneira como extraí-la.
@@ -30,9 +30,40 @@ original e do arquivo modificado. O ruído, calculado como a diferençaa desses 
 O objetivo desse trabalho é completar o código disponível nesta atividade para realizar a decodificação de um arquivo que foi esteganografado na imagem.
 
 ## Descrição
-1. Um arquivo est´a escondido na imagem .PPM. O arquivo escondido est´a codificado nos
-pixels da imagem da seguinte forma:
- o bin´ario dos c´odigos ASCII do nome original do arquivo (finalizado pelo caracter
-zero)
- o bin´ario do tamanho do arquivo (em quatro bytes)
- e os bytes do arquivo.
+
+- [x] Um arquivo está escondido na imagem <b>.PPM</b>. O arquivo escondido está codificado nos pixels da imagem da seguinte forma:
+    - o binário dos códigos ASCII do nome original do arquivo (finalizado pelo caracter zero)
+    - o binário do tamanho do arquivo (em quatro bytes)
+    - e os bytes do arquivo.
+
+- [x] Os bits (zero ou um) das representações binárias estão armazenados, modificando as bandas R,G e B dos pixels em sequência. Por exemplo, considerando a imagem colorida:
+      
+![tabela](https://github.com/RenannLage/Atividades-Processamente-de-Imagens/assets/89847080/bc9912fa-6bc9-43e2-860b-bacd188c1b1d)
+
+Seja 'A', a primeira letra do nome do arquivo (cujo código ASCII binário é 01000001). Na codificação do arquivo, a letra 'A' modifica as seguintes bandas dos pixels iniciais (identificados em letras maiúsculas e com cores).
+
+![tabela2](https://github.com/RenannLage/Atividades-Processamente-de-Imagens/assets/89847080/7431e2c7-7ce1-44c1-8856-7711e5f511e9)
+
+Onde:
+    R1 = r1 & 0xF E, codifica o bit zero (0)
+    
+    G2 = g2 | 0x01, codifica o bit um (1)
+    
+    B3 = b3 & 0xF E, codifica o bit zero (0)
+    
+    R4 = r4 & 0xF E, codifica o bit zero (0)
+    
+    G5 = g5 & 0xF E, codifica o bit zero (0)
+    
+    B6 = b6 & 0xF E, codifica o bit zero (0)
+    
+    R7 = r7 & 0xF E, codifica o bit zero (0)
+    
+    G8 = g8 | 0x01, codifica o bita um (1)
+
+- [x] A operação R1 = r1 & 0xF E, que executa um e-bit-a-bit com a máscara 0xF E, tem o efeito de transformar o último bit da banda R para zero.
+- [x] De forma simétrica, a operação G2 = g2 | 0x01 , que executa um ou-bit-a-bit com a m´ascara 0x01, tem o efeito de transformar o último bit da banda G para um e assim sucessivamente.
+- [x] Depois da codificação do nome do arquivo, os quatro bytes seguintes definem a quantidade de bytes do arquivo, e dessa forma, a quantidade de pixels que estão modificados no restante da imagem.
+
+
+
