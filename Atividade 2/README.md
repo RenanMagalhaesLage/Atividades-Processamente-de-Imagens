@@ -6,7 +6,7 @@ Prof. [Luiz Eduardo da Silva](https://github.com/luizedsilva)
 <hr>
 <div align="center">
 <h1>Trabalho de Processamento de Imagem</h1>
-    <p>Atividade 1 - Arte ASCII</p>
+    <p>Atividade 2 - Esteganografia</p>
 </div>
 
 ## Objetivo
