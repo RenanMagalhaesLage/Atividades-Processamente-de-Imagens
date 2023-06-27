@@ -62,8 +62,37 @@ Onde:
     G8 = g8 | 0x01, codifica o bita um (1)
 
 - [x] A operação R1 = r1 & 0xF E, que executa um e-bit-a-bit com a máscara 0xF E, tem o efeito de transformar o último bit da banda R para zero.
-- [x] De forma simétrica, a operação G2 = g2 | 0x01 , que executa um ou-bit-a-bit com a m´ascara 0x01, tem o efeito de transformar o último bit da banda G para um e assim sucessivamente.
+- [x] De forma simétrica, a operação G2 = g2 | 0x01 , que executa um ou-bit-a-bit com a máscara 0x01, tem o efeito de transformar o último bit da banda G para um e assim sucessivamente.
 - [x] Depois da codificação do nome do arquivo, os quatro bytes seguintes definem a quantidade de bytes do arquivo, e dessa forma, a quantidade de pixels que estão modificados no restante da imagem.
+
+![imgexemplo](https://github.com/RenannLage/Atividades-Processamente-de-Imagens/assets/89847080/4387ad81-3854-455d-88c6-b79497604d30)
+
+Para incluir o arquivo de nome 'A.txt', com os seguintes 2 bytes:
+
+42
+
+Cuja codificação (nome, tamanho e os bytes) em binário é:
+
+![sdasdad](https://github.com/RenannLage/Atividades-Processamente-de-Imagens/assets/89847080/b72621de-45d3-4354-93d6-098a279c60ac)
+
+- [x] Pode-se observar ainda que, considerando esse esquema de codificação, para que um arquivo possa ser escondido numa imagem, o número de pixels da imagem deve ser suficiente
+para a codificação do arquivo. Sejam:
+    - TN (Tamanho do Nome) = o número de letras do nome do arquivo somado de um (caracter zero no fim do nome);
+    - TA (Tamanho do arquivo) = quatro bytes usados para codificar o tamanho do arquivo;
+    - NB (Número de bytes) = número de bytes do arquivo a ser ocultado;
+    - nlinhas = número de linhas da imagem;
+    - ncolunas = número de colunas da imagem.
+
+Assim, o arquivo só pode ser esteganografado na imagem se:
+
+![numero](https://github.com/RenannLage/Atividades-Processamente-de-Imagens/assets/89847080/be557a13-7e69-4b61-b3c6-5081b72b99b6)
+
+- [x] No exemplo anterior, TN = 6, TA = 4, NB = 2, o que soma 12 * 8 pixels que foram afetados, ou seja, 96 pixels da imagem com 100 pixels (10 linhas e 10 colunas) foram modificados para codificar o arquivo.
+- [x] Considerando esse esquema de codificação do arquivo na imagem, a sua tarefa é desenvolver o decodificador. O código a ser completado está disponível junto com a atividade.
+Este programa deve receber o nome do arquivo da imagem, extrair e gerar (em disco) o arquivo que está escondido.
+
+
+
 
 
 
