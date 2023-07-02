@@ -7,7 +7,7 @@
 /*−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−−
  *           UNIFAL − Universidade Federal de Alfenas.
  *             BACHARELADO EM CIENCIA DA COMPUTACAO.
- * Trabalho..: Imagem ASCII
+ * Trabalho..: Steganography
  * Disciplina: Processamento de Imagens
  * Professor.: Luiz Eduardo da Silva
  * Aluno.....: Renan Magalhães Lage
@@ -41,8 +41,8 @@ void decode(image In)
         blue
     };
     int banda = 1; //1 = red, 2=green, 3=blue
-    char bits[8] = "";
-    char bitsTam[32] = "";
+    char bits[9] = "";
+    char bitsTam[33] = "";
     int contBit = 0;
     char* endptr; //Ponteiro usado para a função strol
     char simb;
@@ -117,6 +117,7 @@ void decode(image In)
         contBit++;
         if(contBit > 7)
         {     
+            bits[contBit]= '\0';
             decimal = strtol(bits, &endptr, 2);
             //printf("%ld\n", decimal);
             if(decimal == 0)
@@ -141,18 +142,11 @@ void decode(image In)
         }
     }
     printf("File name: %s\n", name);
-
-    /*LIMPANDO O VETOR*/
-    for(int i = 0; i < 8; i++)
-    {
-        bits[i] = '\0';
-    }
     
     contBit = 0;
     //printf("conti = %d \n", continuacao);
 
     /* DECODIFICANDO O TAMANHO */
-
     for(int i = 0; i < 32; i++, continuacao++)
     {
         pixel = In->px[continuacao+1];
@@ -222,6 +216,8 @@ void decode(image In)
             banda = 1;
         }
     }
+    bitsTam[32] = '\0';
+    //printf("bitsTAM = %s\n",bitsTam) ;
     decimal = strtol(bitsTam, &endptr, 2);
     fsize = decimal;
     
@@ -236,6 +232,7 @@ void decode(image In)
     contBit = 0;
     while (fsize)
     {
+        /* DECODIFICANDO O CONTEUDO */
         for(int i = 0; i < 8; i++, continuacao++)
         {
             pixel = In->px[continuacao+1];
@@ -305,6 +302,7 @@ void decode(image In)
                 banda = 1;
             }
         }
+        bits[8] = '\0';
         //printf("conti = %d \n", continuacao);
         //printf("bits = %s \n", bits);
         decimal = strtol(bits, &endptr, 2);
