@@ -3,7 +3,7 @@
 </div>
 
 #### Universidade Federal de Alfenas - UNIFAL
-Atividades realizadas durante a matéria de Processamento de Imagens
+Trabalhos realizados na disciplina de Processamento de Imagens
 
 #### Professor
 -[Luiz Eduardo da Silva](https://github.com/luizedsilva)
